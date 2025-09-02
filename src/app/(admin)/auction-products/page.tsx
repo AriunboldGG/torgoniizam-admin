@@ -5,6 +5,24 @@ import { useState } from "react";
 import Image from "next/image";
 import AuctionDetailsModal from "@/components/modals/AuctionDetailsModal";
 
+// Define the auction product type
+interface AuctionProduct {
+  id: number;
+  uniqID: string;
+  name: string;
+  description: string;
+  startingPrice: number;
+  currentBid: number;
+  category: string;
+  status: string;
+  image: string;
+  seller: string;
+  winner: string | null;
+  createdAt: string;
+  auctionEndDate: string;
+  bids: number;
+}
+
 // Sample auction products with unique IDs
 const auctionProducts = [
   {
@@ -110,7 +128,7 @@ export default function AuctionProductsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [categoryFilter, setCategoryFilter] = useState("all");
-  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [selectedProduct, setSelectedProduct] = useState<AuctionProduct | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   if (!user) return null;
@@ -161,7 +179,7 @@ export default function AuctionProductsPage() {
 
   const categories = Array.from(new Set(auctionProducts.map(p => p.category)));
 
-  const handleViewDetails = (product: any) => {
+  const handleViewDetails = (product: AuctionProduct) => {
     setSelectedProduct(product);
     setIsModalOpen(true);
   };

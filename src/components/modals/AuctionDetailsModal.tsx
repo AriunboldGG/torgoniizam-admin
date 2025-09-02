@@ -9,16 +9,18 @@ interface AuctionProduct {
   uniqID: string;
   name: string;
   description: string;
-  startingPrice: number;
-  currentBid: number;
+  startingPrice?: number;
+  currentBid?: number;
+  price?: number; // For my-products page
   category: string;
   status: string;
   image: string;
-  seller: string;
-  winner: string | null;
+  seller?: string;
+  winner?: string | null;
   createdAt: string;
-  auctionEndDate: string;
+  auctionEndDate?: string;
   bids: number;
+  highestBid?: number; // For my-products page
 }
 
 interface AuctionDetailsModalProps {
@@ -148,14 +150,14 @@ export default function AuctionDetailsModal({ isOpen, onClose, product }: Auctio
                   <div>
                     <span className="text-sm text-gray-500 dark:text-gray-400">Starting Price</span>
                     <p className="text-lg font-semibold text-gray-900 dark:text-white">
-                      {formatPrice(product.startingPrice)}
+                      {formatPrice(product.startingPrice || product.price || 0)}
                     </p>
                   </div>
                   
                   <div>
                     <span className="text-sm text-gray-500 dark:text-gray-400">Current Bid</span>
                     <p className="text-lg font-semibold text-green-600 dark:text-green-400">
-                      {formatPrice(product.currentBid)}
+                      {formatPrice(product.currentBid || product.highestBid || 0)}
                     </p>
                   </div>
                   
@@ -177,12 +179,14 @@ export default function AuctionDetailsModal({ isOpen, onClose, product }: Auctio
 
               {/* Seller & Winner Info */}
               <div className="space-y-4">
-                <div className="flex justify-between items-center py-3 border-b border-gray-200 dark:border-gray-700">
-                  <span className="text-gray-500 dark:text-gray-400">Seller</span>
-                  <span className="font-medium text-gray-900 dark:text-white">
-                    {product.seller}
-                  </span>
-                </div>
+                {product.seller && (
+                  <div className="flex justify-between items-center py-3 border-b border-gray-200 dark:border-gray-700">
+                    <span className="text-gray-500 dark:text-gray-400">Seller</span>
+                    <span className="font-medium text-gray-900 dark:text-white">
+                      {product.seller}
+                    </span>
+                  </div>
+                )}
                 
                 {product.winner && (
                   <div className="flex justify-between items-center py-3 border-b border-gray-200 dark:border-gray-700">
@@ -200,12 +204,14 @@ export default function AuctionDetailsModal({ isOpen, onClose, product }: Auctio
                   </span>
                 </div>
                 
-                <div className="flex justify-between items-center py-3">
-                  <span className="text-gray-500 dark:text-gray-400">Auction Ends</span>
-                  <span className="font-medium text-gray-900 dark:text-white">
-                    {formatDate(product.auctionEndDate)}
-                  </span>
-                </div>
+                {product.auctionEndDate && (
+                  <div className="flex justify-between items-center py-3">
+                    <span className="text-gray-500 dark:text-gray-400">Auction Ends</span>
+                    <span className="font-medium text-gray-900 dark:text-white">
+                      {formatDate(product.auctionEndDate)}
+                    </span>
+                  </div>
+                )}
               </div>
 
               {/* Action Buttons */}

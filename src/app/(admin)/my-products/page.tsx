@@ -5,6 +5,21 @@ import { useState } from "react";
 import Image from "next/image";
 import AuctionDetailsModal from "@/components/modals/AuctionDetailsModal";
 
+// Define the product type for my-products page
+interface MyProduct {
+  id: number;
+  uniqID: string;
+  name: string;
+  description: string;
+  price: number;
+  category: string;
+  status: string;
+  image: string;
+  createdAt: string;
+  bids: number;
+  highestBid: number;
+}
+
 // Function to generate timestamp-based unique ID
 const generateUniqID = (timestamp: number) => {
   const date = new Date(timestamp);
@@ -77,7 +92,7 @@ const sampleProducts = [
 export default function MyProductsPage() {
   const { user } = useAuth();
   const [filter, setFilter] = useState<"all" | "active" | "ended" | "pending">("all");
-  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [selectedProduct, setSelectedProduct] = useState<MyProduct | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   if (!user || user.role !== "pawnshop_owner") {
@@ -100,7 +115,7 @@ export default function MyProductsPage() {
     return product.status === filter;
   });
 
-  const handleViewDetails = (product: any) => {
+  const handleViewDetails = (product: MyProduct) => {
     setSelectedProduct(product);
     setIsModalOpen(true);
   };
