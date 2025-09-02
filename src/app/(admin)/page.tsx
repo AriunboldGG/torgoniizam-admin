@@ -1,8 +1,9 @@
 "use client";
 
-import type { Metadata } from "next";
+
 import { EcommerceMetrics } from "@/components/ecommerce/EcommerceMetrics";
 import React, { useState } from "react";
+import Image from "next/image";
 import MonthlyTarget from "@/components/ecommerce/MonthlyTarget";
 import MonthlySalesChart from "@/components/ecommerce/MonthlySalesChart";
 import StatisticsChart from "@/components/ecommerce/StatisticsChart";
@@ -16,7 +17,20 @@ export default function Ecommerce() {
   const { user } = useAuth();
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState("");
-  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [searchResults, setSearchResults] = useState<Array<{
+    id: number;
+    uniqID: string;
+    name: string;
+    description: string;
+    startingPrice: number;
+    currentBid: number;
+    category: string;
+    status: string;
+    image: string;
+    seller: string;
+    winner: string | null;
+    createdAt: string;
+  }>>([]);
   const [isSearching, setIsSearching] = useState(false);
 
   // Function to generate timestamp-based unique ID
@@ -156,8 +170,9 @@ export default function Ecommerce() {
     }
   };
 
-  // Show loading or redirect for pawnshop owners
+  // Redirect pawnshop owners to their products page
   if (user && user.role === "pawnshop_owner") {
+    router.push("/my-products");
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-brand-500"></div>
@@ -204,9 +219,11 @@ export default function Ecommerce() {
                   className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg border border-gray-200 dark:border-gray-600"
                 >
                   <div className="flex items-start gap-3">
-                    <img
+                    <Image
                       src={product.image}
                       alt={product.name}
+                      width={64}
+                      height={64}
                       className="w-16 h-16 object-cover rounded-lg"
                     />
                     <div className="flex-1">
@@ -244,7 +261,7 @@ export default function Ecommerce() {
         {searchTerm && searchResults.length === 0 && !isSearching && (
           <div className="mt-4 p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
             <p className="text-sm text-yellow-800 dark:text-yellow-200">
-              <strong>No products found</strong> for "{searchTerm}"
+              <strong>No products found</strong> for &quot;{searchTerm}&quot;
             </p>
             <p className="text-xs text-yellow-600 dark:text-yellow-300 mt-1">
               Try searching with a different unique ID or product name.

@@ -2,6 +2,7 @@
 
 import { useAuth } from "@/context/AuthContext";
 import { useState } from "react";
+import Image from "next/image";
 
 // Function to generate timestamp-based unique ID
 const generateUniqID = (timestamp: number) => {
@@ -139,7 +140,7 @@ export default function MyProductsPage() {
           ].map((tab) => (
             <button
               key={tab.key}
-              onClick={() => setFilter(tab.key as any)}
+              onClick={() => setFilter(tab.key as "all" | "active" | "sold" | "pending")}
               className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
                 filter === tab.key
                   ? "bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm"
@@ -160,9 +161,11 @@ export default function MyProductsPage() {
             className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-lg transition-shadow"
           >
             <div className="relative">
-              <img
+              <Image
                 src={product.image}
                 alt={product.name}
+                width={400}
+                height={192}
                 className="w-full h-48 object-cover"
               />
               <div className="absolute top-3 left-3">
