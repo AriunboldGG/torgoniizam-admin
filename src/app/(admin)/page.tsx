@@ -175,7 +175,7 @@ export default function Ecommerce() {
           <div className="flex-1">
             <input
               type="text"
-              placeholder="Search by unique ID (e.g., AU-2024-001)..."
+              placeholder="Search by unique ID (e.g., AU-20240115-103045)..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && handleSearch()}

@@ -8,6 +8,19 @@ import {
 import Badge from "../ui/badge/Badge";
 import Image from "next/image";
 
+// Function to generate timestamp-based unique ID
+const generateUniqID = (timestamp: number) => {
+  const date = new Date(timestamp);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  const seconds = String(date.getSeconds()).padStart(2, '0');
+  
+  return `AU-${year}${month}${day}-${hours}${minutes}${seconds}`;
+};
+
 // Define the TypeScript interface for the table rows
 interface Product {
   id: number; // Unique identifier for each product
@@ -26,7 +39,7 @@ interface Product {
 const tableData: Product[] = [
   {
     id: 1,
-    uniqID: "AU-2024-001",
+    uniqID: generateUniqID(new Date('2024-01-15T10:30:45').getTime()),
     name: "Gold Ring",
     variants: "1 Variant",
     category: "ҮНЭТ ЭДЛЭЛ",
@@ -37,7 +50,7 @@ const tableData: Product[] = [
   },
   {
     id: 2,
-    uniqID: "AU-2024-002",
+    uniqID: generateUniqID(new Date('2024-01-10T14:22:18').getTime()),
     name: "iPhone 15 Pro",
     variants: "1 Variant",
     category: "ГАР УТАС & ТАБЛЕТ",
@@ -49,7 +62,7 @@ const tableData: Product[] = [
   },
   {
     id: 3,
-    uniqID: "AU-2024-003",
+    uniqID: generateUniqID(new Date('2024-01-20T09:15:33').getTime()),
     name: "MacBook Pro",
     variants: "1 Variant",
     category: "КОМПЬЮТЕР",
@@ -60,7 +73,7 @@ const tableData: Product[] = [
   },
   {
     id: 4,
-    uniqID: "AU-2024-004",
+    uniqID: generateUniqID(new Date('2024-01-18T16:45:12').getTime()),
     name: "Samsung TV",
     variants: "1 Variant",
     category: "ЦАХИЛГААН БАРАА",
@@ -71,7 +84,7 @@ const tableData: Product[] = [
   },
   {
     id: 5,
-    uniqID: "AU-2024-005",
+    uniqID: generateUniqID(new Date('2024-01-22T11:08:27').getTime()),
     name: "Toyota Land Cruiser",
     variants: "1 Variant",
     category: "АВТОМАШИН",

@@ -3,57 +3,70 @@
 import { useAuth } from "@/context/AuthContext";
 import { useState } from "react";
 
+// Function to generate timestamp-based unique ID
+const generateUniqID = (timestamp: number) => {
+  const date = new Date(timestamp);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  const seconds = String(date.getSeconds()).padStart(2, '0');
+  
+  return `AU-${year}${month}${day}-${hours}${minutes}${seconds}`;
+};
+
 // Sample product data for demonstration
 const sampleProducts = [
   {
     id: 1,
-    uniqID: "AU-2024-001",
+    uniqID: generateUniqID(new Date('2024-01-15T10:30:45').getTime()),
     name: "Gold Ring",
     description: "Beautiful 18k gold ring with diamond",
     price: 2500000,
     category: "ҮНЭТ ЭДЛЭЛ",
     status: "active",
     image: "/images/product/prod1.jpg",
-    createdAt: "2024-01-15",
+    createdAt: "2024-01-15T10:30:45",
     bids: 12,
     highestBid: 2800000,
   },
   {
     id: 2,
-    uniqID: "AU-2024-002",
+    uniqID: generateUniqID(new Date('2024-01-10T14:22:18').getTime()),
     name: "iPhone 15 Pro",
     description: "Latest iPhone with advanced features",
     price: 1500000,
     category: "ГАР УТАС & ТАБЛЕТ",
     status: "sold",
     image: "/images/product/prod2.png",
-    createdAt: "2024-01-10",
+    createdAt: "2024-01-10T14:22:18",
     bids: 8,
     highestBid: 1800000,
   },
   {
     id: 3,
-    uniqID: "AU-2024-003",
+    uniqID: generateUniqID(new Date('2024-01-20T09:15:33').getTime()),
     name: "MacBook Pro",
     description: "High-performance laptop for professionals",
     price: 800000,
     category: "КОМПЬЮТЕР",
     status: "active",
     image: "/images/product/prod3.png",
-    createdAt: "2024-01-20",
+    createdAt: "2024-01-20T09:15:33",
     bids: 5,
     highestBid: 950000,
   },
   {
     id: 4,
-    uniqID: "AU-2024-004",
+    uniqID: generateUniqID(new Date('2024-01-18T16:45:12').getTime()),
     name: "Samsung TV",
     description: "55-inch 4K Smart TV",
     price: 3200000,
     category: "ЦАХИЛГААН БАРАА",
     status: "pending",
     image: "/images/product/prod4.png",
-    createdAt: "2024-01-18",
+    createdAt: "2024-01-18T16:45:12",
     bids: 0,
     highestBid: 0,
   },
