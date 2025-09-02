@@ -1,0 +1,324 @@
+"use client";
+
+import { EcommerceMetrics } from "@/components/ecommerce/EcommerceMetrics";
+import React, { useState } from "react";
+import Image from "next/image";
+import MonthlyTarget from "@/components/ecommerce/MonthlyTarget";
+import MonthlySalesChart from "@/components/ecommerce/MonthlySalesChart";
+import StatisticsChart from "@/components/ecommerce/StatisticsChart";
+import RecentOrders from "@/components/ecommerce/RecentOrders";
+
+import { useAuth } from "@/context/AuthContext";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+
+export default function AdminDashboardClient() {
+  const { user } = useAuth();
+  const router = useRouter();
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchResults, setSearchResults] = useState<Array<{
+    id: number;
+    uniqID: string;
+    name: string;
+    description: string;
+    startingPrice: number;
+    currentBid: number;
+    category: string;
+    status: string;
+    image: string;
+    seller: string;
+    winner: string | null;
+    createdAt: string;
+  }>>([]);
+  const [isSearching, setIsSearching] = useState(false);
+
+  // Function to generate timestamp-based unique ID
+  const generateUniqID = (timestamp: number) => {
+    const date = new Date(timestamp);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const seconds = String(date.getSeconds()).padStart(2, '0');
+    
+    return `AU-${year}${month}${day}-${hours}${minutes}${seconds}`;
+  };
+
+  // Sample auction products data with timestamp-based unique IDs
+  const auctionProducts = [
+    {
+      id: 1,
+      uniqID: generateUniqID(new Date('2024-01-15T10:30:45').getTime()),
+      name: "Gold Ring",
+      description: "Beautiful 18k gold ring with diamond",
+      startingPrice: 2500000,
+      currentBid: 2800000,
+      category: "ҮНЭТ ЭДЛЭЛ",
+      status: "active",
+      image: "/images/product/prod1.jpg",
+      seller: "Алтан Шармал Дэлгүүр",
+      winner: null,
+      createdAt: "2024-01-15T10:30:45",
+    },
+    {
+      id: 2,
+      uniqID: generateUniqID(new Date('2024-01-10T14:22:18').getTime()),
+      name: "iPhone 15 Pro",
+      description: "Latest iPhone with advanced features",
+      startingPrice: 1500000,
+      currentBid: 1800000,
+      category: "ГАР УТАС & ТАБЛЕТ",
+      status: "ended",
+      image: "/images/product/prod2.png",
+      seller: "Технологийн Дэлгүүр",
+      winner: "Батбаяр",
+      createdAt: "2024-01-10T14:22:18",
+    },
+    {
+      id: 3,
+      uniqID: generateUniqID(new Date('2024-01-20T09:15:33').getTime()),
+      name: "MacBook Pro",
+      description: "High-performance laptop for professionals",
+      startingPrice: 800000,
+      currentBid: 950000,
+      category: "КОМПЬЮТЕР",
+      status: "active",
+      image: "/images/product/prod3.png",
+      seller: "Компьютер Дэлгүүр",
+      winner: null,
+      createdAt: "2024-01-20T09:15:33",
+    },
+    {
+      id: 4,
+      uniqID: generateUniqID(new Date('2024-01-18T16:45:12').getTime()),
+      name: "Samsung TV",
+      description: "55-inch 4K Smart TV",
+      startingPrice: 3200000,
+      currentBid: 3200000,
+      category: "ЦАХИЛГААН БАРАА",
+      status: "pending",
+      image: "/images/product/prod4.png",
+      seller: "Электроник Дэлгүүр",
+      winner: null,
+      createdAt: "2024-01-18T16:45:12",
+    },
+    {
+      id: 5,
+      uniqID: generateUniqID(new Date('2024-01-22T11:20:30').getTime()),
+      name: "Toyota Land Cruiser",
+      description: "2018 Toyota Land Cruiser Prado",
+      startingPrice: 45000000,
+      currentBid: 52000000,
+      category: "АВТОМАШИН",
+      status: "active",
+      image: "/images/product/prod1.jpg",
+      seller: "Авто Дэлгүүр",
+      winner: null,
+      createdAt: "2024-01-22T11:20:30",
+    },
+    {
+      id: 6,
+      uniqID: generateUniqID(new Date('2024-01-12T08:45:15').getTime()),
+      name: "Rolex Watch",
+      description: "Vintage Rolex Submariner",
+      startingPrice: 12000000,
+      currentBid: 15000000,
+      category: "ҮНЭТ ЭДЛЭЛ",
+      status: "ended",
+      image: "/images/product/prod2.png",
+      seller: "Цаг Дэлгүүр",
+      winner: "Сайханбаяр",
+      createdAt: "2024-01-12T08:45:15",
+    },
+  ];
+
+  // Redirect pawnshop owners to their products page
+  useEffect(() => {
+    if (user && user.role === "pawnshop_owner") {
+      router.push("/my-products");
+    }
+  }, [user, router]);
+
+  // Handle search functionality
+  const handleSearch = (term: string) => {
+    setSearchTerm(term);
+    if (term.trim() === "") {
+      setSearchResults([]);
+      setIsSearching(false);
+      return;
+    }
+
+    setIsSearching(true);
+    // Simulate search delay
+    setTimeout(() => {
+      const results = auctionProducts.filter(
+        (product) =>
+          product.name.toLowerCase().includes(term.toLowerCase()) ||
+          product.category.toLowerCase().includes(term.toLowerCase()) ||
+          product.uniqID.toLowerCase().includes(term.toLowerCase())
+      );
+      setSearchResults(results);
+      setIsSearching(false);
+    }, 500);
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "active":
+        return "bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400";
+      case "ended":
+        return "bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400";
+      case "pending":
+        return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400";
+      default:
+        return "bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400";
+    }
+  };
+
+  // Show loading for pawnshop owners (they will be redirected)
+  if (user && user.role === "pawnshop_owner") {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-brand-500 mx-auto mb-4"></div>
+          <p className="text-gray-600 dark:text-gray-400">Redirecting to your products...</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+            Auction Dashboard
+          </h1>
+          <p className="text-gray-600 dark:text-gray-400">
+            Manage and monitor all auction activities
+          </p>
+        </div>
+        
+        {/* Search Bar */}
+        <div className="relative">
+          <input
+            type="text"
+            placeholder="Search auctions..."
+            value={searchTerm}
+            onChange={(e) => handleSearch(e.target.value)}
+            className="w-full sm:w-80 px-4 py-2 pl-10 text-sm border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 dark:text-white focus:border-brand-500 focus:ring-1 focus:ring-brand-500"
+          />
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <svg className="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      {/* Search Results */}
+      {searchTerm && (
+        <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+            Search Results for "{searchTerm}"
+          </h3>
+          {isSearching ? (
+            <div className="flex items-center justify-center py-8">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-500"></div>
+            </div>
+          ) : searchResults.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {searchResults.map((product) => (
+                <div key={product.id} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                  <div className="flex items-center gap-3 mb-3">
+                    <Image
+                      src={product.image}
+                      alt={product.name}
+                      width={48}
+                      height={48}
+                      className="rounded-lg object-cover"
+                    />
+                    <div className="flex-1">
+                      <h4 className="font-medium text-gray-900 dark:text-white">{product.name}</h4>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">{product.uniqID}</p>
+                    </div>
+                    <span className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(product.status)}`}>
+                      {product.status}
+                    </span>
+                  </div>
+                  <div className="text-sm text-gray-600 dark:text-gray-400">
+                    <p>Starting: {product.startingPrice.toLocaleString()} MNT</p>
+                    <p>Current: {product.currentBid.toLocaleString()} MNT</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-gray-500 dark:text-gray-400 text-center py-8">
+              No auctions found matching your search.
+            </p>
+          )}
+        </div>
+      )}
+
+      {/* Metrics */}
+      <EcommerceMetrics />
+
+      {/* Charts */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <MonthlySalesChart />
+        <StatisticsChart />
+      </div>
+
+      {/* Recent Orders and Monthly Target */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <RecentOrders />
+        <MonthlyTarget />
+      </div>
+
+      {/* Recent Auctions */}
+      <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+        <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+            Recent Auctions
+          </h2>
+        </div>
+        <div className="p-6">
+          <div className="space-y-4">
+            {auctionProducts.slice(0, 5).map((product) => (
+              <div key={product.id} className="flex items-center gap-4 p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
+                <Image
+                  src={product.image}
+                  alt={product.name}
+                  width={60}
+                  height={60}
+                  className="rounded-lg object-cover"
+                />
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-1">
+                    <h3 className="font-medium text-gray-900 dark:text-white">{product.name}</h3>
+                    <span className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(product.status)}`}>
+                      {product.status}
+                    </span>
+                  </div>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">{product.uniqID}</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">{product.category}</p>
+                </div>
+                <div className="text-right">
+                  <p className="font-medium text-gray-900 dark:text-white">
+                    {product.currentBid.toLocaleString()} MNT
+                  </p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    {product.bids} bids
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
