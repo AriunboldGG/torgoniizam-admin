@@ -103,13 +103,13 @@ export default function AuctionDetailsModal({ isOpen, onClose, product }: Auctio
                 />
               </div>
               
-              {/* Additional Images Placeholder */}
+              {/* Additional Images */}
               <div className="grid grid-cols-3 gap-2">
-                {[1, 2, 3].map((index) => (
+                {["/images/product/prod1.jpg", "/images/product/prod2.png", "/images/product/prod3.png"].map((imagePath, index) => (
                   <div key={index} className="aspect-square relative rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-700">
                     <Image
-                      src={product.image}
-                      alt={`${product.name} ${index}`}
+                      src={imagePath}
+                      alt={`Product ${index + 1}`}
                       fill
                       className="object-cover opacity-60"
                     />
