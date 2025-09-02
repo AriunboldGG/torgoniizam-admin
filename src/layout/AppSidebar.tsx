@@ -30,8 +30,8 @@ const superAdminNavItems: NavItem[] = [
     name: "Dashboard",
     subItems: [
       { name: "Дуудлага худалдааны бүтээгдэхүүнүүд", path: "/", pro: false },
-      { name: "Аукцион бүтээгдэхүүн", path: "/auction-products", pro: false },
-      { name: "Бүтээгдэхүүн нэмэх", path: "/add-product", pro: false }
+      { name: "Аукцион бүтээгдэхүүн", path: "/pages/auction-products", pro: false },
+      { name: "Бүтээгдэхүүн нэмэх", path: "/pages/add-product", pro: false }
     ],
   },
   {
@@ -61,7 +61,7 @@ const superAdminNavItems: NavItem[] = [
     icon: <GridIcon />,
     name: "Categories",
     subItems: [
-      { name: "All Categories", path: "/categories", pro: false },
+      { name: "All Categories", path: "/pages/categories", pro: false },
       { name: "Car Brands", path: "/car-brands", pro: false },
       { name: "Computer Brands", path: "/computer-brands", pro: false },
       { name: "Jewelry Brands", path: "/jewelry-brands", pro: false },
@@ -95,8 +95,8 @@ const pawnshopOwnerNavItems: NavItem[] = [
     icon: <GridIcon />,
     name: "Dashboard",
     subItems: [
-      { name: "My Products", path: "/my-products", pro: false },
-      { name: "Add Product", path: "/add-product", pro: false }
+      { name: "My Products", path: "/pages/my-products", pro: false },
+      { name: "Add Product", path: "/pages/add-product", pro: false }
     ],
   },
 ];

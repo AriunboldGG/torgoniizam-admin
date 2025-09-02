@@ -12,7 +12,7 @@ export default function HomePage() {
     if (!isLoading) {
       if (user) {
         // User is authenticated, redirect to admin dashboard
-        router.push("/auction-products");
+        router.push("/pages/auction-products");
       } else {
         // User is not authenticated, redirect to sign-in page
         router.push("/signin");

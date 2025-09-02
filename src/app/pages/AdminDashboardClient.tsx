@@ -143,7 +143,7 @@ export default function AdminDashboardClient() {
   // Redirect pawnshop owners to their products page
   useEffect(() => {
     if (user && user.role === "pawnshop_owner") {
-      router.push("/my-products");
+      router.push("/pages/my-products");
     }
   }, [user, router]);
 

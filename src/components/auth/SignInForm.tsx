@@ -23,7 +23,17 @@ export default function SignInForm() {
     e.preventDefault();
     setError("");
     
+    // Basic validation
+    if (!email || !password) {
+      setError("Please fill in all required fields");
+      return;
+    }
+    
+    console.log("Form submitted with:", { email, password, selectedRole });
+    
     const success = await login(email, password, selectedRole);
+    console.log("Login result:", success);
+    
     if (success) {
       // Redirect to admin dashboard after successful login
       router.push("/");
@@ -60,7 +70,7 @@ export default function SignInForm() {
                   <Input 
                     placeholder="info@gmail.com" 
                     type="email" 
-                    defaultValue={email}
+                    value={email}
                     onChange={(e) => setEmail(e.target.value)}
                   />
                 </div>
@@ -72,7 +82,7 @@ export default function SignInForm() {
                     <Input
                       type={showPassword ? "text" : "password"}
                       placeholder="Enter your password"
-                      defaultValue={password}
+                      value={password}
                       onChange={(e) => setPassword(e.target.value)}
                     />
                     <span
@@ -80,9 +90,9 @@ export default function SignInForm() {
                       className="absolute z-30 -translate-y-1/2 cursor-pointer right-4 top-1/2"
                     >
                       {showPassword ? (
-                        <EyeIcon className="fill-gray-500 dark:fill-gray-400" />
+                        <EyeIcon />
                       ) : (
-                        <EyeCloseIcon className="fill-gray-500 dark:fill-gray-400" />
+                        <EyeCloseIcon />
                       )}
                     </span>
                   </div>
@@ -107,7 +117,12 @@ export default function SignInForm() {
                   </div>
                 )}
                 <div>
-                  <Button className="w-full" size="sm" disabled={isLoading}>
+                  <Button 
+                    type="submit"
+                    className="w-full" 
+                    size="sm" 
+                    disabled={isLoading}
+                  >
                     {isLoading ? "Signing in..." : "Sign in"}
                   </Button>
                 </div>
@@ -116,10 +131,10 @@ export default function SignInForm() {
 
             <div className="mt-5">
               <p className="text-sm font-normal text-center text-gray-700 dark:text-gray-400 sm:text-start">
-                Don&apos;t have an account? {""}
+                Don&apos;t have an account?{" "}
                 <Link
                   href="/signup"
-                  className="text-brand-500 hover:text-brand-600 dark:text-brand-400"
+                  className="text-brand-500 hover:text-brand-600 dark:text-brand-400 font-medium"
                 >
                   Sign Up
                 </Link>
