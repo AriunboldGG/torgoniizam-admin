@@ -82,7 +82,9 @@ export default function ProductForm() {
       setFormData(prev => ({
         ...prev,
         [parent]: {
-          ...prev[parent as keyof ProductFormData],
+          ...(typeof prev[parent as keyof ProductFormData] === 'object' && prev[parent as keyof ProductFormData] !== null 
+            ? prev[parent as keyof ProductFormData] 
+            : {}),
           [child]: value,
         },
       }));
