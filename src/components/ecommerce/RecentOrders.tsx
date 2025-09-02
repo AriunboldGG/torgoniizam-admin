@@ -11,61 +11,74 @@ import Image from "next/image";
 // Define the TypeScript interface for the table rows
 interface Product {
   id: number; // Unique identifier for each product
+  uniqID: string; // Unique auction ID for tracking winners
   name: string; // Product name
   variants: string; // Number of variants (e.g., "1 Variant", "2 Variants")
   category: string; // Category of the product
   price: string; // Price of the product (as a string with currency symbol)
-  // status: string; // Status of the product
   image: string; // URL or path to the product image
-  status: "Delivered" | "Pending" | "Canceled"; // Status of the product
+  status: "Active" | "Sold" | "Pending"; // Status of the product
+  seller: string; // Seller name
+  winner?: string; // Winner name (if sold)
 }
 
 // Define the table data using the interface
 const tableData: Product[] = [
   {
     id: 1,
-    name: "MacBook Pro 13”",
-    variants: "2 Variants",
-    category: "Laptop",
-    price: "$2399.00",
-    status: "Delivered",
-    image: "/images/product/product-01.jpg", // Replace with actual image URL
+    uniqID: "AU-2024-001",
+    name: "Gold Ring",
+    variants: "1 Variant",
+    category: "ҮНЭТ ЭДЛЭЛ",
+    price: "₮2,800,000",
+    status: "Active",
+    image: "/images/product/prod1.jpg",
+    seller: "Алтан Шармал Дэлгүүр",
   },
   {
     id: 2,
-    name: "Apple Watch Ultra",
+    uniqID: "AU-2024-002",
+    name: "iPhone 15 Pro",
     variants: "1 Variant",
-    category: "Watch",
-    price: "$879.00",
-    status: "Pending",
-    image: "/images/product/product-02.jpg", // Replace with actual image URL
+    category: "ГАР УТАС & ТАБЛЕТ",
+    price: "₮1,800,000",
+    status: "Sold",
+    image: "/images/product/prod2.png",
+    seller: "Технологийн Дэлгүүр",
+    winner: "Батбаяр",
   },
   {
     id: 3,
-    name: "iPhone 15 Pro Max",
-    variants: "2 Variants",
-    category: "SmartPhone",
-    price: "$1869.00",
-    status: "Delivered",
-    image: "/images/product/product-03.jpg", // Replace with actual image URL
+    uniqID: "AU-2024-003",
+    name: "MacBook Pro",
+    variants: "1 Variant",
+    category: "КОМПЬЮТЕР",
+    price: "₮950,000",
+    status: "Active",
+    image: "/images/product/prod3.png",
+    seller: "Компьютер Дэлгүүр",
   },
   {
     id: 4,
-    name: "iPad Pro 3rd Gen",
-    variants: "2 Variants",
-    category: "Electronics",
-    price: "$1699.00",
-    status: "Canceled",
-    image: "/images/product/product-04.jpg", // Replace with actual image URL
+    uniqID: "AU-2024-004",
+    name: "Samsung TV",
+    variants: "1 Variant",
+    category: "ЦАХИЛГААН БАРАА",
+    price: "₮3,200,000",
+    status: "Pending",
+    image: "/images/product/prod4.png",
+    seller: "Электроник Дэлгүүр",
   },
   {
     id: 5,
-    name: "AirPods Pro 2nd Gen",
+    uniqID: "AU-2024-005",
+    name: "Toyota Land Cruiser",
     variants: "1 Variant",
-    category: "Accessories",
-    price: "$240.00",
-    status: "Delivered",
-    image: "/images/product/product-05.jpg", // Replace with actual image URL
+    category: "АВТОМАШИН",
+    price: "₮52,000,000",
+    status: "Active",
+    image: "/images/product/prod1.jpg",
+    seller: "Авто Дэлгүүр",
   },
 ];
 
@@ -75,8 +88,11 @@ export default function RecentOrders() {
       <div className="flex flex-col gap-2 mb-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h3 className="text-lg font-semibold text-gray-800 dark:text-white/90">
-            Recent Orders
+            Auction Products
           </h3>
+          <p className="text-sm text-gray-500 dark:text-gray-400">
+            Search products by unique ID to track winners
+          </p>
         </div>
 
         <div className="flex items-center gap-3">
@@ -138,6 +154,12 @@ export default function RecentOrders() {
                 isHeader
                 className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
               >
+                Unique ID
+              </TableCell>
+              <TableCell
+                isHeader
+                className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+              >
                 Category
               </TableCell>
               <TableCell
@@ -176,30 +198,40 @@ export default function RecentOrders() {
                         {product.name}
                       </p>
                       <span className="text-gray-500 text-theme-xs dark:text-gray-400">
-                        {product.variants}
+                        {product.seller}
                       </span>
                     </div>
                   </div>
                 </TableCell>
-                <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
-                  {product.price}
+                <TableCell className="py-3">
+                  <span className="px-2 py-1 text-xs font-medium bg-orange-100 text-orange-800 dark:bg-orange-900/20 dark:text-orange-400 rounded-full">
+                    {product.uniqID}
+                  </span>
                 </TableCell>
                 <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
                   {product.category}
                 </TableCell>
                 <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
+                  {product.price}
+                </TableCell>
+                <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
                   <Badge
                     size="sm"
                     color={
-                      product.status === "Delivered"
+                      product.status === "Active"
                         ? "success"
-                        : product.status === "Pending"
-                        ? "warning"
-                        : "error"
+                        : product.status === "Sold"
+                        ? "info"
+                        : "warning"
                     }
                   >
                     {product.status}
                   </Badge>
+                  {product.winner && (
+                    <div className="mt-1 text-xs text-blue-600 dark:text-blue-400">
+                      Winner: {product.winner}
+                    </div>
+                  )}
                 </TableCell>
               </TableRow>
             ))}

@@ -7,6 +7,7 @@ import { useState } from "react";
 const sampleProducts = [
   {
     id: 1,
+    uniqID: "AU-2024-001",
     name: "Gold Ring",
     description: "Beautiful 18k gold ring with diamond",
     price: 2500000,
@@ -19,6 +20,7 @@ const sampleProducts = [
   },
   {
     id: 2,
+    uniqID: "AU-2024-002",
     name: "iPhone 15 Pro",
     description: "Latest iPhone with advanced features",
     price: 1500000,
@@ -31,6 +33,7 @@ const sampleProducts = [
   },
   {
     id: 3,
+    uniqID: "AU-2024-003",
     name: "MacBook Pro",
     description: "High-performance laptop for professionals",
     price: 800000,
@@ -43,6 +46,7 @@ const sampleProducts = [
   },
   {
     id: 4,
+    uniqID: "AU-2024-004",
     name: "Samsung TV",
     description: "55-inch 4K Smart TV",
     price: 3200000,
@@ -148,6 +152,11 @@ export default function MyProductsPage() {
                 alt={product.name}
                 className="w-full h-48 object-cover"
               />
+              <div className="absolute top-3 left-3">
+                <span className="px-2 py-1 text-xs font-medium bg-orange-100 text-orange-800 dark:bg-orange-900/20 dark:text-orange-400 rounded-full">
+                  {product.uniqID}
+                </span>
+              </div>
               <div className="absolute top-3 right-3">
                 <span
                   className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(
@@ -168,6 +177,13 @@ export default function MyProductsPage() {
               </p>
               
               <div className="space-y-2 mb-4">
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-500 dark:text-gray-400">Unique ID:</span>
+                  <span className="font-medium text-orange-600 dark:text-orange-400">
+                    {product.uniqID}
+                  </span>
+                </div>
+                
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-500 dark:text-gray-400">Starting Price:</span>
                   <span className="font-medium text-gray-900 dark:text-white">

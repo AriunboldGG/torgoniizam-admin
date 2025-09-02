@@ -30,6 +30,7 @@ const superAdminNavItems: NavItem[] = [
     name: "Dashboard",
     subItems: [
       { name: "Дуудлага худалдааны бүтээгдэхүүнүүд", path: "/", pro: false },
+      { name: "Аукцион бүтээгдэхүүн", path: "/auction-products", pro: false },
       { name: "Бүтээгдэхүүн нэмэх", path: "/add-product", pro: false }
     ],
   },
@@ -96,14 +97,6 @@ const pawnshopOwnerNavItems: NavItem[] = [
     subItems: [
       { name: "My Products", path: "/my-products", pro: false },
       { name: "Add Product", path: "/add-product", pro: false }
-    ],
-  },
-  {
-    icon: <TableIcon />,
-    name: "My Sales",
-    subItems: [
-      { name: "Active Auctions", path: "/my-auctions", pro: false },
-      { name: "Sold Items", path: "/sold-items", pro: false },
     ],
   },
 ];
@@ -406,22 +399,24 @@ const AppSidebar: React.FC = () => {
               {renderMenuItems(navItems, "main")}
             </div>
 
-            <div className="">
-              <h2
-                className={`mb-4 text-xs uppercase flex leading-[20px] text-gray-400 ${
-                  !isExpanded && !isHovered
-                    ? "lg:justify-center"
-                    : "justify-start"
-                }`}
-              >
-                {isExpanded || isHovered || isMobileOpen ? (
-                  "Others"
-                ) : (
-                  <HorizontaLDots />
-                )}
-              </h2>
-              {renderMenuItems(othersItems, "others")}
-            </div>
+            {user?.role === "super_admin" && (
+              <div className="">
+                <h2
+                  className={`mb-4 text-xs uppercase flex leading-[20px] text-gray-400 ${
+                    !isExpanded && !isHovered
+                      ? "lg:justify-center"
+                      : "justify-start"
+                  }`}
+                >
+                  {isExpanded || isHovered || isMobileOpen ? (
+                    "Others"
+                  ) : (
+                    <HorizontaLDots />
+                  )}
+                </h2>
+                {renderMenuItems(othersItems, "others")}
+              </div>
+            )}
           </div>
         </nav>
         {isExpanded || isHovered || isMobileOpen ? (
@@ -432,12 +427,12 @@ const AppSidebar: React.FC = () => {
                 <div className="flex items-center gap-3 mb-3">
                   <div className="w-8 h-8 bg-brand-500 rounded-full flex items-center justify-center">
                     <span className="text-white text-sm font-medium">
-                      {user.name.charAt(0)}
+                      {user.name?.charAt(0)?.toUpperCase() || 'U'}
                     </span>
                   </div>
                   <div>
                     <p className="text-sm font-medium text-gray-900 dark:text-white">
-                      {user.name}
+                      {user.name || 'User'}
                     </p>
                     <p className="text-xs text-gray-500 dark:text-gray-400">
                       {user.role === "super_admin" ? "Super Admin" : "Pawnshop Owner"}
