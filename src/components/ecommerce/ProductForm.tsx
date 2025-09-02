@@ -79,15 +79,18 @@ export default function ProductForm() {
   const handleInputChange = (field: string, value: string | boolean) => {
     if (field.includes(".")) {
       const [parent, child] = field.split(".");
-      setFormData(prev => ({
-        ...prev,
-        [parent]: {
-          ...(typeof prev[parent as keyof ProductFormData] === 'object' && prev[parent as keyof ProductFormData] !== null 
-            ? prev[parent as keyof ProductFormData] 
-            : {}),
-          [child]: value,
-        },
-      }));
+      setFormData(prev => {
+        const parentValue = prev[parent as keyof ProductFormData];
+        return {
+          ...prev,
+          [parent]: {
+            ...(parent === 'dimensions' && typeof parentValue === 'object' && parentValue !== null 
+              ? parentValue 
+              : {}),
+            [child]: value,
+          },
+        };
+      });
     } else {
       setFormData(prev => ({
         ...prev,
