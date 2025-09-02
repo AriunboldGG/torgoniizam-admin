@@ -3,6 +3,7 @@
 import { useAuth } from "@/context/AuthContext";
 import { useState } from "react";
 import Image from "next/image";
+import AuctionDetailsModal from "@/components/modals/AuctionDetailsModal";
 
 // Function to generate timestamp-based unique ID
 const generateUniqID = (timestamp: number) => {
@@ -39,7 +40,7 @@ const sampleProducts = [
     description: "Latest iPhone with advanced features",
     price: 1500000,
     category: "ГАР УТАС & ТАБЛЕТ",
-    status: "sold",
+    status: "ended",
     image: "/images/product/prod2.png",
     createdAt: "2024-01-10T14:22:18",
     bids: 8,
@@ -75,7 +76,9 @@ const sampleProducts = [
 
 export default function MyProductsPage() {
   const { user } = useAuth();
-  const [filter, setFilter] = useState<"all" | "active" | "sold" | "pending">("all");
+  const [filter, setFilter] = useState<"all" | "active" | "ended" | "pending">("all");
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   if (!user || user.role !== "pawnshop_owner") {
     return (
@@ -97,6 +100,16 @@ export default function MyProductsPage() {
     return product.status === filter;
   });
 
+  const handleViewDetails = (product: any) => {
+    setSelectedProduct(product);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedProduct(null);
+  };
+
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('mn-MN', {
       style: 'currency',
@@ -109,7 +122,7 @@ export default function MyProductsPage() {
     switch (status) {
       case "active":
         return "bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400";
-      case "sold":
+      case "ended":
         return "bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400";
       case "pending":
         return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400";
@@ -135,12 +148,12 @@ export default function MyProductsPage() {
           {[
             { key: "all", label: "All Products", count: sampleProducts.length },
             { key: "active", label: "Active", count: sampleProducts.filter(p => p.status === "active").length },
-            { key: "sold", label: "Sold", count: sampleProducts.filter(p => p.status === "sold").length },
+            { key: "ended", label: "Ended", count: sampleProducts.filter(p => p.status === "ended").length },
             { key: "pending", label: "Pending", count: sampleProducts.filter(p => p.status === "pending").length },
           ].map((tab) => (
             <button
               key={tab.key}
-              onClick={() => setFilter(tab.key as "all" | "active" | "sold" | "pending")}
+              onClick={() => setFilter(tab.key as "all" | "active" | "ended" | "pending")}
               className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
                 filter === tab.key
                   ? "bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm"
@@ -232,10 +245,13 @@ export default function MyProductsPage() {
               </div>
               
               <div className="flex space-x-2">
-                <button className="flex-1 px-3 py-2 text-sm font-medium text-white bg-brand-500 hover:bg-brand-600 rounded-md transition-colors">
+                <button 
+                  onClick={() => handleViewDetails(product)}
+                  className="flex-1 px-3 py-2 text-sm font-medium text-white bg-brand-500 hover:bg-brand-600 rounded-md transition-colors"
+                >
                   View Details
                 </button>
-                {product.status === "active" && (
+                {product.status === "pending" && (
                   <button className="px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-md transition-colors">
                     Edit
                   </button>
@@ -286,7 +302,7 @@ export default function MyProductsPage() {
         
         <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
           <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
-            {sampleProducts.filter(p => p.status === "sold").length}
+            {sampleProducts.filter(p => p.status === "ended").length}
           </div>
           <div className="text-sm text-gray-600 dark:text-gray-400">Sold Items</div>
         </div>
@@ -298,6 +314,13 @@ export default function MyProductsPage() {
           <div className="text-sm text-gray-600 dark:text-gray-400">Total Revenue</div>
         </div>
       </div>
+
+      {/* Auction Details Modal */}
+      <AuctionDetailsModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        product={selectedProduct}
+      />
     </div>
   );
 }

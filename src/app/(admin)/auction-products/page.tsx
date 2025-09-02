@@ -3,6 +3,7 @@
 import { useAuth } from "@/context/AuthContext";
 import { useState } from "react";
 import Image from "next/image";
+import AuctionDetailsModal from "@/components/modals/AuctionDetailsModal";
 
 // Sample auction products with unique IDs
 const auctionProducts = [
@@ -30,7 +31,7 @@ const auctionProducts = [
     startingPrice: 1500000,
     currentBid: 1800000,
     category: "ГАР УТАС & ТАБЛЕТ",
-    status: "sold",
+    status: "ended",
     image: "/images/product/prod2.png",
     createdAt: "2024-01-10",
     bids: 8,
@@ -94,7 +95,7 @@ const auctionProducts = [
     startingPrice: 12000000,
     currentBid: 15000000,
     category: "ҮНЭТ ЭДЛЭЛ",
-    status: "sold",
+    status: "ended",
     image: "/images/product/prod2.png",
     createdAt: "2024-01-12",
     bids: 22,
@@ -109,6 +110,8 @@ export default function AuctionProductsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [categoryFilter, setCategoryFilter] = useState("all");
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   if (!user) return null;
 
@@ -134,7 +137,7 @@ export default function AuctionProductsPage() {
     switch (status) {
       case "active":
         return "bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400";
-      case "sold":
+      case "ended":
         return "bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400";
       case "pending":
         return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400";
@@ -157,6 +160,16 @@ export default function AuctionProductsPage() {
   });
 
   const categories = Array.from(new Set(auctionProducts.map(p => p.category)));
+
+  const handleViewDetails = (product: any) => {
+    setSelectedProduct(product);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedProduct(null);
+  };
 
   return (
     <div className="max-w-7xl mx-auto">
@@ -196,7 +209,7 @@ export default function AuctionProductsPage() {
             >
               <option value="all">All Status</option>
               <option value="active">Active</option>
-              <option value="sold">Sold</option>
+              <option value="ended">Ended</option>
               <option value="pending">Pending</option>
             </select>
           </div>
@@ -323,12 +336,17 @@ export default function AuctionProductsPage() {
               </div>
               
               <div className="flex space-x-2">
-                <button className="flex-1 px-3 py-2 text-sm font-medium text-white bg-brand-500 rounded-lg hover:bg-brand-600 transition-colors">
+                <button 
+                  onClick={() => handleViewDetails(product)}
+                  className="flex-1 px-3 py-2 text-sm font-medium text-white bg-brand-500 rounded-lg hover:bg-brand-600 transition-colors"
+                >
                   View Details
                 </button>
-                <button className="px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
-                  Edit
-                </button>
+                {product.status === "pending" && (
+                  <button className="px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
+                    Edit
+                  </button>
+                )}
               </div>
             </div>
           </div>
@@ -374,7 +392,7 @@ export default function AuctionProductsPage() {
             Sold Items
           </h3>
           <div className="text-3xl font-bold text-blue-500">
-            {auctionProducts.filter(p => p.status === "sold").length}
+            {auctionProducts.filter(p => p.status === "ended").length}
           </div>
         </div>
         
@@ -384,12 +402,19 @@ export default function AuctionProductsPage() {
           </h3>
           <div className="text-3xl font-bold text-purple-500">
             {formatPrice(auctionProducts
-              .filter(p => p.status === "sold")
+              .filter(p => p.status === "ended")
               .reduce((sum, p) => sum + p.currentBid, 0)
             )}
           </div>
         </div>
       </div>
+
+      {/* Auction Details Modal */}
+      <AuctionDetailsModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        product={selectedProduct}
+      />
     </div>
   );
 }

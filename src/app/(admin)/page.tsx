@@ -70,7 +70,7 @@ export default function Ecommerce() {
       startingPrice: 1500000,
       currentBid: 1800000,
       category: "ГАР УТАС & ТАБЛЕТ",
-      status: "sold",
+      status: "ended",
       image: "/images/product/prod2.png",
       seller: "Технологийн Дэлгүүр",
       winner: "Батбаяр",
@@ -161,7 +161,7 @@ export default function Ecommerce() {
     switch (status) {
       case "active":
         return "bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400";
-      case "sold":
+      case "ended":
         return "bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400";
       case "pending":
         return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400";

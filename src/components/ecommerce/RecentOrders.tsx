@@ -30,7 +30,7 @@ interface Product {
   category: string; // Category of the product
   price: string; // Price of the product (as a string with currency symbol)
   image: string; // URL or path to the product image
-  status: "Active" | "Sold" | "Pending"; // Status of the product
+  status: "Active" | "Ended" | "Pending"; // Status of the product
   seller: string; // Seller name
   winner?: string; // Winner name (if sold)
 }
@@ -55,7 +55,7 @@ const tableData: Product[] = [
     variants: "1 Variant",
     category: "ГАР УТАС & ТАБЛЕТ",
     price: "₮1,800,000",
-    status: "Sold",
+    status: "Ended",
     image: "/images/product/prod2.png",
     seller: "Технологийн Дэлгүүр",
     winner: "Батбаяр",
@@ -233,7 +233,7 @@ export default function RecentOrders() {
                     color={
                       product.status === "Active"
                         ? "success"
-                        : product.status === "Sold"
+                        : product.status === "Ended"
                         ? "info"
                         : "warning"
                     }
