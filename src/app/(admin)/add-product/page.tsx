@@ -2,6 +2,7 @@
 
 import { useAuth } from "@/context/AuthContext";
 import { useState } from "react";
+import Image from "next/image";
 import Input from "@/components/form/input/InputField";
 import Label from "@/components/form/Label";
 import Button from "@/components/ui/button/Button";
@@ -535,9 +536,11 @@ export default function AddProductPage() {
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-2">
                   {formData.images.map((file, index) => (
                     <div key={index} className="relative">
-                      <img
+                      <Image
                         src={URL.createObjectURL(file)}
                         alt={`Preview ${index + 1}`}
+                        width={96}
+                        height={96}
                         className="w-full h-24 object-cover rounded-lg border border-gray-200 dark:border-gray-700"
                       />
                       <button
