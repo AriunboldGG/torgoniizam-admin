@@ -29,6 +29,7 @@ export default function AdminDashboardClient() {
     seller: string;
     winner: string | null;
     createdAt: string;
+    bids: number;
   }>>([]);
   const [isSearching, setIsSearching] = useState(false);
 
@@ -60,6 +61,7 @@ export default function AdminDashboardClient() {
       seller: "Алтан Шармал Дэлгүүр",
       winner: null,
       createdAt: "2024-01-15T10:30:45",
+      bids: 12,
     },
     {
       id: 2,
@@ -74,6 +76,7 @@ export default function AdminDashboardClient() {
       seller: "Технологийн Дэлгүүр",
       winner: "Батбаяр",
       createdAt: "2024-01-10T14:22:18",
+      bids: 8,
     },
     {
       id: 3,
@@ -88,6 +91,7 @@ export default function AdminDashboardClient() {
       seller: "Компьютер Дэлгүүр",
       winner: null,
       createdAt: "2024-01-20T09:15:33",
+      bids: 5,
     },
     {
       id: 4,
@@ -102,6 +106,7 @@ export default function AdminDashboardClient() {
       seller: "Электроник Дэлгүүр",
       winner: null,
       createdAt: "2024-01-18T16:45:12",
+      bids: 0,
     },
     {
       id: 5,
@@ -116,6 +121,7 @@ export default function AdminDashboardClient() {
       seller: "Авто Дэлгүүр",
       winner: null,
       createdAt: "2024-01-22T11:20:30",
+      bids: 15,
     },
     {
       id: 6,
@@ -130,6 +136,7 @@ export default function AdminDashboardClient() {
       seller: "Цаг Дэлгүүр",
       winner: "Сайханбаяр",
       createdAt: "2024-01-12T08:45:15",
+      bids: 22,
     },
   ];
 
@@ -221,9 +228,9 @@ export default function AdminDashboardClient() {
       {/* Search Results */}
       {searchTerm && (
         <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-            Search Results for "{searchTerm}"
-          </h3>
+                     <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+             Search Results for &ldquo;{searchTerm}&rdquo;
+           </h3>
           {isSearching ? (
             <div className="flex items-center justify-center py-8">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-500"></div>

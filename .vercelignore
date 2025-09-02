@@ -75,3 +75,7 @@ jspm_packages/
 
 # DynamoDB Local files
 .dynamodb/
+
+# Exclude problematic client reference manifest files
+.next/server/app/(admin)/page_client-reference-manifest.js
+.next/server/app/(admin)/**/page_client-reference-manifest.js
