@@ -9,6 +9,19 @@ const nextConfig: NextConfig = {
     });
     return config;
   },
+  // Handle potential client reference issues
+  serverExternalPackages: [],
+  // Ensure proper file handling
+  typescript: {
+    ignoreBuildErrors: false,
+  },
+  eslint: {
+    ignoreDuringBuilds: false,
+  },
+  // Optimize for Vercel deployment
+  images: {
+    domains: [],
+  },
 };
 
 export default nextConfig;

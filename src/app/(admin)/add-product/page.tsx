@@ -40,7 +40,7 @@ export default function AddProductPage() {
     auctionEndDate: "",
     
     // Images
-    images: [] as File[],
+    images: [] as string[],
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -74,9 +74,17 @@ export default function AddProductPage() {
     }
   };
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || []);
-    setFormData(prev => ({ ...prev, images: [...prev.images, ...files] }));
+  const availableImages = [
+    "/images/product/prod1.jpg",
+    "/images/product/prod2.png", 
+    "/images/product/prod3.png",
+    "/images/product/prod4.png"
+  ];
+
+  const handleImageSelect = (imagePath: string) => {
+    if (!formData.images.includes(imagePath)) {
+      setFormData(prev => ({ ...prev, images: [...prev.images, imagePath] }));
+    }
   };
 
   const removeImage = (index: number) => {
@@ -509,7 +517,7 @@ export default function AddProductPage() {
           </div>
         </div>
 
-        {/* Image Upload */}
+        {/* Image Selection */}
         <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
             Product Images
@@ -518,15 +526,38 @@ export default function AddProductPage() {
           <div className="space-y-4">
             <div>
               <Label>
-                Upload Images <span className="text-red-500">*</span>
+                Select Images <span className="text-red-500">*</span>
               </Label>
-              <input
-                type="file"
-                multiple
-                accept="image/*"
-                onChange={handleImageUpload}
-                className="w-full px-4 py-3 text-sm border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 dark:text-white focus:border-brand-500 focus:ring-1 focus:ring-brand-500"
-              />
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                Choose from available product images
+              </p>
+              
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {availableImages.map((imagePath, index) => (
+                  <div 
+                    key={index}
+                    className={`relative cursor-pointer rounded-lg border-2 transition-all ${
+                      formData.images.includes(imagePath)
+                        ? "border-brand-500 ring-2 ring-brand-200"
+                        : "border-gray-200 dark:border-gray-700 hover:border-brand-300"
+                    }`}
+                    onClick={() => handleImageSelect(imagePath)}
+                  >
+                    <Image
+                      src={imagePath}
+                      alt={`Product ${index + 1}`}
+                      width={120}
+                      height={120}
+                      className="w-full h-24 object-cover rounded-lg"
+                    />
+                    {formData.images.includes(imagePath) && (
+                      <div className="absolute top-1 right-1 w-6 h-6 bg-brand-500 text-white rounded-full flex items-center justify-center text-xs">
+                        ✓
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
               {errors.images && <p className="text-red-500 text-sm mt-1">{errors.images}</p>}
             </div>
 
@@ -534,11 +565,11 @@ export default function AddProductPage() {
               <div>
                 <Label>Selected Images ({formData.images.length})</Label>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-2">
-                  {formData.images.map((file, index) => (
+                  {formData.images.map((imagePath, index) => (
                     <div key={index} className="relative">
                       <Image
-                        src={URL.createObjectURL(file)}
-                        alt={`Preview ${index + 1}`}
+                        src={imagePath}
+                        alt={`Selected ${index + 1}`}
                         width={96}
                         height={96}
                         className="w-full h-24 object-cover rounded-lg border border-gray-200 dark:border-gray-700"
