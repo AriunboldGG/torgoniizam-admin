@@ -22,6 +22,10 @@ const nextConfig: NextConfig = {
   images: {
     domains: [],
   },
+  // Fix client reference manifest issues
+  experimental: {
+    serverComponentsExternalPackages: [],
+  },
 };
 
 export default nextConfig;
