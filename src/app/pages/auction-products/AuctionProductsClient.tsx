@@ -298,7 +298,7 @@ export default function AuctionProductsClient() {
                   onClick={() => handleViewDetails(product)}
                   className="flex-1 px-3 py-2 text-sm font-medium text-white bg-brand-500 rounded-lg hover:bg-brand-600 transition-colors"
                 >
-                  View Details
+                  Дэлгэрэнгүй үзэх
                 </button>
                 {product.status === "pending" && (
                   <button className="px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">

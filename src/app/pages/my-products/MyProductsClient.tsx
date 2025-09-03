@@ -1,7 +1,7 @@
 "use client";
 
 import { useAuth } from "@/context/AuthContext";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import Image from "next/image";
 import AuctionDetailsModal from "@/components/modals/AuctionDetailsModal";
 
@@ -93,6 +93,11 @@ export default function MyProductsClient() {
   const { user } = useAuth();
   const [selectedProduct, setSelectedProduct] = useState<MyProduct | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  
+  // Search and filter states
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [categoryFilter, setCategoryFilter] = useState("all");
 
   const handleViewDetails = (product: MyProduct) => {
     setSelectedProduct(product);
@@ -133,6 +138,38 @@ export default function MyProductsClient() {
     });
   };
 
+  // Get unique categories for filter dropdown
+  const categories = useMemo(() => {
+    const uniqueCategories = [...new Set(sampleProducts.map(product => product.category))];
+    return uniqueCategories;
+  }, []);
+
+  // Filter products based on search and filter criteria
+  const filteredProducts = useMemo(() => {
+    return sampleProducts.filter(product => {
+      // Search filter
+      const matchesSearch = searchTerm === "" || 
+        product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        product.uniqID.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        product.description.toLowerCase().includes(searchTerm.toLowerCase());
+
+      // Status filter
+      const matchesStatus = statusFilter === "all" || product.status === statusFilter;
+
+      // Category filter
+      const matchesCategory = categoryFilter === "all" || product.category === categoryFilter;
+
+      return matchesSearch && matchesStatus && matchesCategory;
+    });
+  }, [searchTerm, statusFilter, categoryFilter]);
+
+  // Clear all filters
+  const clearFilters = () => {
+    setSearchTerm("");
+    setStatusFilter("all");
+    setCategoryFilter("all");
+  };
+
   if (!user || user.role !== "pawnshop_owner") {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -154,29 +191,107 @@ export default function MyProductsClient() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-            My Products
+            Бүтээгдэхүүнүүд
           </h1>
           <p className="text-gray-600 dark:text-gray-400">
-            Manage your auction products
+            Бүтээгдэхүүн удирдах хуудас
           </p>
         </div>
         <div className="flex items-center gap-4">
           <div className="text-sm text-gray-500 dark:text-gray-400">
-            Total: {sampleProducts.length} products
+            Showing: {filteredProducts.length} of {sampleProducts.length} products
           </div>
           <button className="px-4 py-2 bg-brand-500 text-white rounded-lg hover:bg-brand-600 transition-colors">
-            Add Product
+            Бүтээгдэхүүн нэмэх
           </button>
         </div>
       </div>
 
+      {/* Search and Filters */}
+      <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {/* Search Input */}
+          <div className="lg:col-span-2">
+            <label htmlFor="search" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Search Products
+            </label>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </div>
+              <input
+                id="search"
+                type="text"
+                placeholder="Search by name, ID, or description..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
+              />
+            </div>
+          </div>
+
+          {/* Status Filter */}
+          <div>
+            <label htmlFor="status" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Status
+            </label>
+            <select
+              id="status"
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
+            >
+              <option value="all">All Status</option>
+              <option value="active">Active</option>
+              <option value="ended">Ended</option>
+              <option value="pending">Pending</option>
+            </select>
+          </div>
+
+          {/* Category Filter */}
+          <div>
+            <label htmlFor="category" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Category
+            </label>
+            <select
+              id="category"
+              value={categoryFilter}
+              onChange={(e) => setCategoryFilter(e.target.value)}
+              className="block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
+            >
+              <option value="all">All Categories</option>
+              {categories.map((category) => (
+                <option key={category} value={category}>
+                  {category}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        {/* Clear Filters Button */}
+        {(searchTerm || statusFilter !== "all" || categoryFilter !== "all") && (
+          <div className="mt-4 flex justify-end">
+            <button
+              onClick={clearFilters}
+              className="px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors"
+            >
+              Clear all filters
+            </button>
+          </div>
+        )}
+      </div>
+
       {/* Products Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {sampleProducts.map((product) => (
-          <div
-            key={product.id}
-            className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-lg transition-shadow"
-          >
+        {filteredProducts.length > 0 ? (
+          filteredProducts.map((product) => (
+            <div
+              key={product.id}
+              className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-lg transition-shadow"
+            >
             {/* Product Image */}
             <div className="aspect-square relative">
               <Image
@@ -247,7 +362,7 @@ export default function MyProductsClient() {
                   onClick={() => handleViewDetails(product)}
                   className="flex-1 px-3 py-2 text-sm font-medium text-white bg-brand-500 rounded-lg hover:bg-brand-600 transition-colors"
                 >
-                  View Details
+                  Дэлгэрэнгүй үзэх
                 </button>
                 {product.status === "pending" && (
                   <button className="px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
@@ -257,7 +372,26 @@ export default function MyProductsClient() {
               </div>
             </div>
           </div>
-        ))}
+          ))
+        ) : (
+          <div className="col-span-full flex flex-col items-center justify-center py-12 text-center">
+            <svg className="h-12 w-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0112 15c-2.34 0-4.29-1.009-5.824-2.709M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+              No products found
+            </h3>
+            <p className="text-gray-500 dark:text-gray-400 mb-4">
+              Try adjusting your search or filter criteria
+            </p>
+            <button
+              onClick={clearFilters}
+              className="px-4 py-2 text-sm font-medium text-brand-600 dark:text-brand-400 hover:text-brand-700 dark:hover:text-brand-300 transition-colors"
+            >
+              Clear all filters
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Modal */}

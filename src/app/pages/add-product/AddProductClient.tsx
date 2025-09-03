@@ -18,21 +18,25 @@ export default function AddProductPage() {
     subcategory: "",
     description: "",
     startingPrice: "",
+    priceNegotiable: false,
     
-    // Vehicle Specifications (for cars)
-    yearOfManufacture: "",
-    yearOfImport: "",
-    engine: "",
-    color: "",
-    engineCapacity: "",
-    exteriorCondition: "",
-    gearbox: "",
-    interiorCondition: "",
-    steeringWheel: "",
-    location: "",
-    driveType: "",
-    partsCondition: "",
-    mileage: "",
+    // Vehicle Specifications (for cars) - All mandatory fields from the form
+    brand: "", // Сонгох (Select)
+    condition: "", // Нөхцөл (Condition)
+    type: "", // Төрөл (Type)
+    doors: "", // Хаалга (Door)
+    steeringWheel: "", // Хүрд (Steering Wheel)
+    driveType: "", // Хөтлөгч (Drive Type)
+    yearOfManufacture: "", // Үйлдвэрлэсэн он (Year of Manufacture)
+    yearOfImport: "", // Орж ирсэн он (Year of Import)
+    engine: "", // Хөдөлгүүр (Engine)
+    engineCapacity: "", // Мотор багтаамж (Engine Capacity)
+    gearbox: "", // Хурдны хайрцаг (Gearbox)
+    interiorColor: "", // Дотор өнгө (Interior Color)
+    mileage: "", // Явсан (Mileage)
+    leasing: "", // Лизинг (Leasing)
+    color: "", // Өнгө (Color)
+    chassisNumber: "", // Арлын дугаар (Chassis Number/VIN)
     
     // Auction Details
     auctionDuration: "",
@@ -104,12 +108,23 @@ export default function AddProductPage() {
     if (!formData.startingPrice.trim()) newErrors.startingPrice = "Starting price is required";
     if (formData.images.length === 0) newErrors.images = "At least one image is required";
 
-    // Vehicle-specific validations
-    if (formData.category === "Автомашин" || formData.category === "Car") {
+    // Vehicle-specific validations - All mandatory fields from the form
+    if (formData.category === "АВТОМАШИН") {
+      if (!formData.brand) newErrors.brand = "Brand is required";
+      if (!formData.condition) newErrors.condition = "Condition is required";
+      if (!formData.type) newErrors.type = "Type is required";
+      if (!formData.doors) newErrors.doors = "Number of doors is required";
+      if (!formData.steeringWheel) newErrors.steeringWheel = "Steering wheel position is required";
+      if (!formData.driveType) newErrors.driveType = "Drive type is required";
       if (!formData.yearOfManufacture) newErrors.yearOfManufacture = "Year of manufacture is required";
+      if (!formData.yearOfImport) newErrors.yearOfImport = "Year of import is required";
       if (!formData.engine) newErrors.engine = "Engine type is required";
-      if (!formData.color) newErrors.color = "Color is required";
       if (!formData.engineCapacity) newErrors.engineCapacity = "Engine capacity is required";
+      if (!formData.gearbox) newErrors.gearbox = "Gearbox type is required";
+      if (!formData.interiorColor) newErrors.interiorColor = "Interior color is required";
+      if (!formData.mileage) newErrors.mileage = "Mileage is required";
+      if (!formData.leasing) newErrors.leasing = "Leasing status is required";
+      if (!formData.color) newErrors.color = "Exterior color is required";
     }
 
     setErrors(newErrors);
@@ -135,19 +150,23 @@ export default function AddProductPage() {
       subcategory: "",
       description: "",
       startingPrice: "",
+      priceNegotiable: false,
+      brand: "",
+      condition: "",
+      type: "",
+      doors: "",
+      steeringWheel: "",
+      driveType: "",
       yearOfManufacture: "",
       yearOfImport: "",
       engine: "",
-      color: "",
       engineCapacity: "",
-      exteriorCondition: "",
       gearbox: "",
-      interiorCondition: "",
-      steeringWheel: "",
-      location: "",
-      driveType: "",
-      partsCondition: "",
+      interiorColor: "",
       mileage: "",
+      leasing: "",
+      color: "",
+      chassisNumber: "",
       auctionDuration: "",
       auctionStartDate: "",
       auctionEndDate: "",
@@ -245,17 +264,22 @@ export default function AddProductPage() {
 
             <div>
               <Label>
-                Your Price (MNT) <span className="text-red-500">*</span>
+                Үнэ (Price) <span className="text-red-500">*</span>
               </Label>
               <Input
                 type="number"
-                placeholder="e.g., 48200000"
+                placeholder="e.g., 12000000"
                 value={formData.startingPrice}
                 onChange={(e) => handleInputChange("startingPrice", e.target.value)}
                 className={errors.startingPrice ? "border-red-500" : ""}
               />
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                Үнийн дүнг бүх тэгтэй нь оруулна уу. Жишээ нь: 12 саяыг 12000000 гэж оруулна уу.
+              </p>
               {errors.startingPrice && <p className="text-red-500 text-sm mt-1">{errors.startingPrice}</p>}
             </div>
+
+         
 
             {formData.startingPrice && (
               <div>
@@ -295,36 +319,168 @@ export default function AddProductPage() {
         {isVehicleCategory && (
           <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700">
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-              Vehicle Specifications
+              Автомашины мэдээлэл (Vehicle Information)
             </h2>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {/* Сонгох (Select) - Brand */}
+              <div>
+                <Label>
+                  Сонгох (Select) <span className="text-red-500">*</span>
+                </Label>
+                <Select
+                  value={formData.brand}
+                  onChange={(value) => handleInputChange("brand", value)}
+                  options={[
+                    { value: "Toyota", label: "Toyota" },
+                    { value: "Honda", label: "Honda" },
+                    { value: "Nissan", label: "Nissan" },
+                    { value: "Hyundai", label: "Hyundai" },
+                    { value: "Kia", label: "Kia" },
+                    { value: "Mitsubishi", label: "Mitsubishi" },
+                    { value: "Mazda", label: "Mazda" },
+                    { value: "Subaru", label: "Subaru" },
+                    { value: "Suzuki", label: "Suzuki" },
+                    { value: "Isuzu", label: "Isuzu" },
+                    { value: "Other", label: "Other" },
+                  ]}
+                  className={errors.brand ? "border-red-500" : ""}
+                />
+                {errors.brand && <p className="text-red-500 text-sm mt-1">{errors.brand}</p>}
+              </div>
+
+              {/* Нөхцөл (Condition) */}
+              <div>
+                <Label>
+                  Нөхцөл (Condition) <span className="text-red-500">*</span>
+                </Label>
+                <Select
+                  value={formData.condition}
+                  onChange={(value) => handleInputChange("condition", value)}
+                  options={[
+                    { value: "Дугаар авсан", label: "Дугаар авсан (Registered)" },
+                    { value: "Дугаар аваагүй", label: "Дугаар аваагүй (Not Registered)" },
+                    { value: "Шинэ", label: "Шинэ (New)" },
+                    { value: "Хуучин", label: "Хуучин (Used)" },
+                  ]}
+                  className={errors.condition ? "border-red-500" : ""}
+                />
+                {errors.condition && <p className="text-red-500 text-sm mt-1">{errors.condition}</p>}
+              </div>
+
+              {/* Төрөл (Type) */}
+              <div>
+                <Label>
+                  Төрөл (Type) <span className="text-red-500">*</span>
+                </Label>
+                <Select
+                  value={formData.type}
+                  onChange={(value) => handleInputChange("type", value)}
+                  options={[
+                    { value: "Sedan", label: "Sedan" },
+                    { value: "SUV", label: "SUV" },
+                    { value: "Hatchback", label: "Hatchback" },
+                    { value: "Pickup", label: "Pickup" },
+                    { value: "Van", label: "Van" },
+                    { value: "Coupe", label: "Coupe" },
+                    { value: "Convertible", label: "Convertible" },
+                    { value: "Wagon", label: "Wagon" },
+                  ]}
+                  className={errors.type ? "border-red-500" : ""}
+                />
+                {errors.type && <p className="text-red-500 text-sm mt-1">{errors.type}</p>}
+              </div>
+
+              {/* Хаалга (Door) */}
+              <div>
+                <Label>
+                  Хаалга (Door) <span className="text-red-500">*</span>
+                </Label>
+                <Select
+                  value={formData.doors}
+                  onChange={(value) => handleInputChange("doors", value)}
+                  options={[
+                    { value: "2", label: "2 Doors" },
+                    { value: "3", label: "3 Doors" },
+                    { value: "4", label: "4 Doors" },
+                    { value: "5", label: "5 Doors" },
+                  ]}
+                  className={errors.doors ? "border-red-500" : ""}
+                />
+                {errors.doors && <p className="text-red-500 text-sm mt-1">{errors.doors}</p>}
+              </div>
+
+              {/* Хүрд (Steering Wheel) */}
+              <div>
+                <Label>
+                  Хүрд (Steering Wheel) <span className="text-red-500">*</span>
+                </Label>
+                <Select
+                  value={formData.steeringWheel}
+                  onChange={(value) => handleInputChange("steeringWheel", value)}
+                  options={[
+                    { value: "Зүүн", label: "Зүүн (Left)" },
+                    { value: "Баруун", label: "Баруун (Right)" },
+                  ]}
+                  className={errors.steeringWheel ? "border-red-500" : ""}
+                />
+                {errors.steeringWheel && <p className="text-red-500 text-sm mt-1">{errors.steeringWheel}</p>}
+              </div>
+
+              {/* Хөтлөгч (Drive Type) */}
+              <div>
+                <Label>
+                  Хөтлөгч (Drive Type) <span className="text-red-500">*</span>
+                </Label>
+                <Select
+                  value={formData.driveType}
+                  onChange={(value) => handleInputChange("driveType", value)}
+                  options={[
+                    { value: "FWD", label: "FWD (Front Wheel Drive)" },
+                    { value: "RWD", label: "RWD (Rear Wheel Drive)" },
+                    { value: "AWD", label: "AWD (All Wheel Drive)" },
+                    { value: "4WD", label: "4WD (Four Wheel Drive)" },
+                  ]}
+                  className={errors.driveType ? "border-red-500" : ""}
+                />
+                {errors.driveType && <p className="text-red-500 text-sm mt-1">{errors.driveType}</p>}
+              </div>
+
+              {/* Үйлдвэрлэсэн он (Year of Manufacture) */}
               <div>
                 <Label>
                   Үйлдвэрлэсэн он (Year of Manufacture) <span className="text-red-500">*</span>
                 </Label>
-                <Input
-                  type="number"
-                  placeholder="e.g., 2024"
+                <Select
                   value={formData.yearOfManufacture}
-                  onChange={(e) => handleInputChange("yearOfManufacture", e.target.value)}
+                  onChange={(value) => handleInputChange("yearOfManufacture", value)}
+                  options={Array.from({ length: 30 }, (_, i) => {
+                    const year = new Date().getFullYear() - i;
+                    return { value: year.toString(), label: year.toString() };
+                  })}
                   className={errors.yearOfManufacture ? "border-red-500" : ""}
                 />
                 {errors.yearOfManufacture && <p className="text-red-500 text-sm mt-1">{errors.yearOfManufacture}</p>}
               </div>
 
+              {/* Орж ирсэн он (Year of Import) */}
               <div>
                 <Label>
-                  Импортлогдсон он (Year of Import)
+                  Орж ирсэн он (Year of Import) <span className="text-red-500">*</span>
                 </Label>
-                <Input
-                  type="number"
-                  placeholder="e.g., 2025"
+                <Select
                   value={formData.yearOfImport}
-                  onChange={(e) => handleInputChange("yearOfImport", e.target.value)}
+                  onChange={(value) => handleInputChange("yearOfImport", value)}
+                  options={Array.from({ length: 30 }, (_, i) => {
+                    const year = new Date().getFullYear() - i;
+                    return { value: year.toString(), label: year.toString() };
+                  })}
+                  className={errors.yearOfImport ? "border-red-500" : ""}
                 />
+                {errors.yearOfImport && <p className="text-red-500 text-sm mt-1">{errors.yearOfImport}</p>}
               </div>
 
+              {/* Хөдөлгүүр (Engine) */}
               <div>
                 <Label>
                   Хөдөлгүүр (Engine) <span className="text-red-500">*</span>
@@ -337,57 +493,44 @@ export default function AddProductPage() {
                     { value: "Дизель", label: "Дизель (Diesel)" },
                     { value: "Hybrid", label: "Hybrid" },
                     { value: "Electric", label: "Electric" },
+                    { value: "LPG", label: "LPG" },
                   ]}
                   className={errors.engine ? "border-red-500" : ""}
                 />
                 {errors.engine && <p className="text-red-500 text-sm mt-1">{errors.engine}</p>}
               </div>
 
+              {/* Мотор багтаамж (Engine Capacity) */}
               <div>
                 <Label>
-                  Өнгө (Color) <span className="text-red-500">*</span>
+                  Мотор багтаамж (Engine Capacity) <span className="text-red-500">*</span>
                 </Label>
-                <Input
-                  placeholder="e.g., Цэнхэр (Blue)"
-                  value={formData.color}
-                  onChange={(e) => handleInputChange("color", e.target.value)}
-                  className={errors.color ? "border-red-500" : ""}
-                />
-                {errors.color && <p className="text-red-500 text-sm mt-1">{errors.color}</p>}
-              </div>
-
-              <div>
-                <Label>
-                  Моторын багтаамж (Engine Capacity) <span className="text-red-500">*</span>
-                </Label>
-                <Input
-                  placeholder="e.g., 3500CC"
+                <Select
                   value={formData.engineCapacity}
-                  onChange={(e) => handleInputChange("engineCapacity", e.target.value)}
+                  onChange={(value) => handleInputChange("engineCapacity", value)}
+                  options={[
+                    { value: "1000CC", label: "1000CC" },
+                    { value: "1200CC", label: "1200CC" },
+                    { value: "1500CC", label: "1500CC" },
+                    { value: "1600CC", label: "1600CC" },
+                    { value: "1800CC", label: "1800CC" },
+                    { value: "2000CC", label: "2000CC" },
+                    { value: "2500CC", label: "2500CC" },
+                    { value: "3000CC", label: "3000CC" },
+                    { value: "3500CC", label: "3500CC" },
+                    { value: "4000CC", label: "4000CC" },
+                    { value: "4500CC", label: "4500CC" },
+                    { value: "5000CC", label: "5000CC" },
+                  ]}
                   className={errors.engineCapacity ? "border-red-500" : ""}
                 />
                 {errors.engineCapacity && <p className="text-red-500 text-sm mt-1">{errors.engineCapacity}</p>}
               </div>
 
+              {/* Хурдны хайрцаг (Gearbox) */}
               <div>
                 <Label>
-                  Гадна талын ашиглалт (Exterior Condition)
-                </Label>
-                <Select
-                  value={formData.exteriorCondition}
-                  onChange={(value) => handleInputChange("exteriorCondition", value)}
-                  options={[
-                    { value: "Хэвийн", label: "Хэвийн (Normal)" },
-                    { value: "Сайн", label: "Сайн (Good)" },
-                    { value: "Маш сайн", label: "Маш сайн (Very Good)" },
-                    { value: "Шинэ", label: "Шинэ (New)" },
-                  ]}
-                />
-              </div>
-
-              <div>
-                <Label>
-                  Хурдны хайрцаг (Gearbox)
+                  Хурдны хайрцаг (Gearbox) <span className="text-red-500">*</span>
                 </Label>
                 <Select
                   value={formData.gearbox}
@@ -396,85 +539,92 @@ export default function AddProductPage() {
                     { value: "Автомат", label: "Автомат (Automatic)" },
                     { value: "Гар", label: "Гар (Manual)" },
                     { value: "CVT", label: "CVT" },
+                    { value: "Semi-Auto", label: "Semi-Automatic" },
                   ]}
+                  className={errors.gearbox ? "border-red-500" : ""}
                 />
+                {errors.gearbox && <p className="text-red-500 text-sm mt-1">{errors.gearbox}</p>}
               </div>
 
+              {/* Дотор өнгө (Interior Color) */}
               <div>
                 <Label>
-                  Салоны ашиглалт (Interior Condition)
+                  Дотор өнгө (Interior Color) <span className="text-red-500">*</span>
                 </Label>
                 <Select
-                  value={formData.interiorCondition}
-                  onChange={(value) => handleInputChange("interiorCondition", value)}
+                  value={formData.interiorColor}
+                  onChange={(value) => handleInputChange("interiorColor", value)}
                   options={[
-                    { value: "Хэвийн", label: "Хэвийн (Normal)" },
-                    { value: "Сайн", label: "Сайн (Good)" },
-                    { value: "Маш сайн", label: "Маш сайн (Very Good)" },
-                    { value: "Шинэ", label: "Шинэ (New)" },
+                    { value: "Хар", label: "Хар (Black)" },
+                    { value: "Цагаан", label: "Цагаан (White)" },
+                    { value: "Саарал", label: "Саарал (Gray)" },
+                    { value: "Хүрэн", label: "Хүрэн (Brown)" },
+                    { value: "Цэнхэр", label: "Цэнхэр (Blue)" },
+                    { value: "Улаан", label: "Улаан (Red)" },
+                    { value: "Ногоон", label: "Ногоон (Green)" },
+                    { value: "Шар", label: "Шар (Yellow)" },
                   ]}
+                  className={errors.interiorColor ? "border-red-500" : ""}
                 />
+                {errors.interiorColor && <p className="text-red-500 text-sm mt-1">{errors.interiorColor}</p>}
               </div>
 
+              {/* Явсан (Mileage) */}
               <div>
                 <Label>
-                  Хүрд (Steering Wheel)
+                  Явсан (Mileage) <span className="text-red-500">*</span>
+                </Label>
+                <div className="flex">
+                  <Input
+                    type="number"
+                    placeholder="e.g., 8000"
+                    value={formData.mileage}
+                    onChange={(e) => handleInputChange("mileage", e.target.value)}
+                    className={`rounded-r-none ${errors.mileage ? "border-red-500" : ""}`}
+                  />
+                  <span className="px-3 py-2 text-sm border border-l-0 border-gray-200 dark:border-gray-700 rounded-r-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white">
+                    KM
+                  </span>
+                </div>
+                {errors.mileage && <p className="text-red-500 text-sm mt-1">{errors.mileage}</p>}
+              </div>
+
+             
+
+              {/* Өнгө (Color) */}
+              <div>
+                <Label>
+                  Өнгө (Color) <span className="text-red-500">*</span>
                 </Label>
                 <Select
-                  value={formData.steeringWheel}
-                  onChange={(value) => handleInputChange("steeringWheel", value)}
+                  value={formData.color}
+                  onChange={(value) => handleInputChange("color", value)}
                   options={[
-                    { value: "Зөв", label: "Зөв (Right)" },
-                    { value: "Зүүн", label: "Зүүн (Left)" },
+                    { value: "Хар", label: "Хар (Black)" },
+                    { value: "Цагаан", label: "Цагаан (White)" },
+                    { value: "Саарал", label: "Саарал (Gray)" },
+                    { value: "Мөнгөлөг", label: "Мөнгөлөг (Silver)" },
+                    { value: "Цэнхэр", label: "Цэнхэр (Blue)" },
+                    { value: "Улаан", label: "Улаан (Red)" },
+                    { value: "Ногоон", label: "Ногоон (Green)" },
+                    { value: "Шар", label: "Шар (Yellow)" },
+                    { value: "Хүрэн", label: "Хүрэн (Brown)" },
+                    { value: "Ягаан", label: "Ягаан (Purple)" },
                   ]}
+                  className={errors.color ? "border-red-500" : ""}
                 />
+                {errors.color && <p className="text-red-500 text-sm mt-1">{errors.color}</p>}
               </div>
 
+              {/* Арлын дугаар (Chassis Number/VIN) - Not required */}
               <div>
                 <Label>
-                  Байршил (Location)
+                  Арлын дугаар (Chassis Number/VIN)
                 </Label>
                 <Input
-                  placeholder="e.g., Улаанбаатар"
-                  value={formData.location}
-                  onChange={(e) => handleInputChange("location", e.target.value)}
-                />
-              </div>
-
-              <div>
-                <Label>
-                  Хөтлөгч (Drive Type)
-                </Label>
-                <Select
-                  value={formData.driveType}
-                  onChange={(value) => handleInputChange("driveType", value)}
-                  options={[
-                    { value: "Бүх дугуй 4WD", label: "Бүх дугуй 4WD (All-wheel drive 4WD)" },
-                    { value: "Арын дугуй", label: "Арын дугуй (Rear-wheel drive)" },
-                    { value: "Урд дугуй", label: "Урд дугуй (Front-wheel drive)" },
-                  ]}
-                />
-              </div>
-
-              <div>
-                <Label>
-                  Эд ангиудын ашиглалт (Parts Condition)
-                </Label>
-                <Input
-                  placeholder="e.g., Хэвийн"
-                  value={formData.partsCondition}
-                  onChange={(e) => handleInputChange("partsCondition", e.target.value)}
-                />
-              </div>
-
-              <div>
-                <Label>
-                  Гүйлт (Mileage)
-                </Label>
-                <Input
-                  placeholder="e.g., 8000км"
-                  value={formData.mileage}
-                  onChange={(e) => handleInputChange("mileage", e.target.value)}
+                  placeholder="e.g., JT12345678901234567"
+                  value={formData.chassisNumber}
+                  onChange={(e) => handleInputChange("chassisNumber", e.target.value)}
                 />
               </div>
             </div>
@@ -483,9 +633,7 @@ export default function AddProductPage() {
 
         {/* Auction Details */}
         <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-            Auction Details
-          </h2>
+      
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
@@ -603,7 +751,7 @@ export default function AddProductPage() {
             disabled={isSubmitting}
             className="min-w-[120px]"
           >
-            {isSubmitting ? "Adding..." : "Add Product"}
+            {isSubmitting ? "Adding..." : "Бүтээгдэхүүн нэмэх"}
           </Button>
         </div>
       </form>

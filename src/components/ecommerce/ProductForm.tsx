@@ -422,7 +422,7 @@ export default function ProductForm() {
           Reset
         </Button>
         <Button type="submit">
-          Add Product
+          Бүтээгдэхүүн нэмэх
         </Button>
       </div>
     </form>

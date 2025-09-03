@@ -95,8 +95,8 @@ const pawnshopOwnerNavItems: NavItem[] = [
     icon: <GridIcon />,
     name: "Dashboard",
     subItems: [
-      { name: "My Products", path: "/pages/my-products", pro: false },
-      { name: "Add Product", path: "/pages/add-product", pro: false }
+      { name: "Дуудлага худалдааны бүтээгдэхүүнүүд", path: "/pages/my-products", pro: false },
+      { name: "Бүтээгдэхүүн нэмэх", path: "/pages/add-product", pro: false }
     ],
   },
 ];
