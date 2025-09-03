@@ -85,11 +85,7 @@ export default function AuctionDetailsModal({ isOpen, onClose, product }: Auctio
     setIsZoomed(!isZoomed);
   }, [isZoomed]);
 
-  const handleBackdropClick = (e: React.MouseEvent) => {
-    if (e.target === e.currentTarget) {
-      setIsZoomed(false);
-    }
-  };
+
 
   // Keyboard navigation
   useEffect(() => {
@@ -193,11 +189,14 @@ export default function AuctionDetailsModal({ isOpen, onClose, product }: Auctio
                   onClick={() => setIsZoomed(false)}
                 >
                   <div className="relative w-full h-full flex items-center justify-center p-4">
-                    <img
+                    <Image
                       src={productImages[selectedImageIndex]}
                       alt={product.name}
+                      width={1920}
+                      height={1080}
                       className="max-w-full max-h-full object-contain"
                       onClick={(e) => e.stopPropagation()}
+                      unoptimized
                     />
                     
                     {/* Close Button */}
