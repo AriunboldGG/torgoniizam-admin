@@ -41,10 +41,11 @@ export default function AddProductPage() {
     // Auction Details
     auctionDuration: "",
     auctionStartDate: "",
+    auctionStartHour: "",
     auctionEndDate: "",
     
     // Images
-    images: [] as string[],
+    images: [] as File[],
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -78,17 +79,22 @@ export default function AddProductPage() {
     }
   };
 
-  const availableImages = [
-    "/images/product/prod1.jpg",
-    "/images/product/prod2.png", 
-    "/images/product/prod3.png",
-    "/images/product/prod4.png"
-  ];
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    const validFiles = files.filter(file => {
+      const isValidType = file.type.startsWith('image/');
+      const isValidSize = file.size <= 5 * 1024 * 1024; // 5MB limit
+      return isValidType && isValidSize;
+    });
 
-  const handleImageSelect = (imagePath: string) => {
-    if (!formData.images.includes(imagePath)) {
-      setFormData(prev => ({ ...prev, images: [...prev.images, imagePath] }));
+    if (validFiles.length !== files.length) {
+      alert('Some files were rejected. Please upload only image files under 5MB.');
     }
+
+    setFormData(prev => ({ 
+      ...prev, 
+      images: [...prev.images, ...validFiles] 
+    }));
   };
 
   const removeImage = (index: number) => {
@@ -169,6 +175,7 @@ export default function AddProductPage() {
       chassisNumber: "",
       auctionDuration: "",
       auctionStartDate: "",
+      auctionStartHour: "",
       auctionEndDate: "",
       images: [],
     });
@@ -183,24 +190,22 @@ export default function AddProductPage() {
     <div className="max-w-4xl mx-auto">
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-          Add New Product
+          Бүтээгдэхүүн нэмэх
         </h1>
-        <p className="text-gray-600 dark:text-gray-400">
-          Create a new auction listing for your product.
-        </p>
+
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-8">
         {/* Basic Information */}
         <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-            Basic Information
+            Ерөнхий мэдээлэл
           </h2>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <Label>
-                Product Title <span className="text-red-500">*</span>
+                Бүтээгдэхүүний нэр <span className="text-red-500">*</span>
               </Label>
               <Input
                 placeholder="e.g., TOYOTA LAND CRUISER 250"
@@ -213,7 +218,7 @@ export default function AddProductPage() {
 
             <div>
               <Label>
-                Category <span className="text-red-500">*</span>
+                Ангилал <span className="text-red-500">*</span>
               </Label>
               <Select
                 value={formData.category}
@@ -233,7 +238,7 @@ export default function AddProductPage() {
             {formData.category && (
               <div>
                 <Label>
-                  Brand/Subcategory <span className="text-red-500">*</span>
+                  Дэд ангилал <span className="text-red-500">*</span>
                 </Label>
                 <SubcategorySelector
                   categoryId={formData.category}
@@ -248,10 +253,10 @@ export default function AddProductPage() {
 
             <div className="md:col-span-2">
               <Label>
-                Description <span className="text-red-500">*</span>
+                Тайлбар оруулна уу <span className="text-red-500">*</span>
               </Label>
               <textarea
-                placeholder="Enter detailed description of your product..."
+                placeholder="Барааны дэлгэрэнгүй танилцуулга оруулна уу..."
                 value={formData.description}
                 onChange={(e) => handleInputChange("description", e.target.value)}
                 rows={4}
@@ -632,94 +637,124 @@ export default function AddProductPage() {
         )}
 
         {/* Auction Details */}
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700">
-      
-          
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700"> 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <Label>
-                Auction Duration (Days)
+                Дуудлага худалдаа үргэлжлэх хугацаа (Цаг)
               </Label>
               <Select
                 value={formData.auctionDuration}
                 onChange={(value) => handleInputChange("auctionDuration", value)}
                 options={[
-                  { value: "7", label: "7 Days" },
-                  { value: "14", label: "14 Days" },
-                  { value: "21", label: "21 Days" },
-                  { value: "30", label: "30 Days" },
+                  { value: "1", label: "1 цаг" },
+                  { value: "2", label: "2 цаг" },
+                  { value: "3", label: "3 цаг" },
+                  { value: "4", label: "4 цаг" },
+                  { value: "5", label: "5 цаг" },
+                  { value: "6", label: "6 цаг" },
                 ]}
               />
             </div>
 
             <div>
               <Label>
-                Auction Start Date
+                Дуудлага худалдаа эхлэх огноо
               </Label>
-              <Input
-                type="datetime-local"
+              <Select
                 value={formData.auctionStartDate}
-                onChange={(e) => handleInputChange("auctionStartDate", e.target.value)}
+                onChange={(value) => handleInputChange("auctionStartDate", value)}
+                options={[
+                  { 
+                    value: "7", 
+                    label: `7 хоногийн дараа (${new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString('mn-MN')})` 
+                  },
+                  { 
+                    value: "14", 
+                    label: `14 хоногийн дараа (${new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toLocaleDateString('mn-MN')})` 
+                  },
+                  { 
+                    value: "30", 
+                    label: `30 хоногийн дараа (${new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toLocaleDateString('mn-MN')})` 
+                  },
+                ]}
               />
             </div>
+
+            {formData.auctionStartDate && (
+              <div>
+                <Label>
+                  Эхлэх цаг
+                </Label>
+                <Select
+                  value={formData.auctionStartHour}
+                  onChange={(value) => handleInputChange("auctionStartHour", value)}
+                  options={Array.from({ length: 24 }, (_, i) => {
+                    const hour = i.toString().padStart(2, '0');
+                    return { 
+                      value: hour, 
+                      label: `${hour}:00` 
+                    };
+                  })}
+                />
+              </div>
+            )}
           </div>
         </div>
 
-        {/* Image Selection */}
+        {/* Image Upload */}
         <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-            Product Images
+            Бүтээгдэхүүний зураг
           </h2>
           
           <div className="space-y-4">
             <div>
               <Label>
-                Select Images <span className="text-red-500">*</span>
+                Зураг оруулах <span className="text-red-500">*</span>
               </Label>
               <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-                Choose from available product images
+                Компьютерээс зураг сонгоно уу (JPG, PNG, GIF - хамгийн ихдээ 5MB)
               </p>
               
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {availableImages.map((imagePath, index) => (
-                  <div 
-                    key={index}
-                    className={`relative cursor-pointer rounded-lg border-2 transition-all ${
-                      formData.images.includes(imagePath)
-                        ? "border-brand-500 ring-2 ring-brand-200"
-                        : "border-gray-200 dark:border-gray-700 hover:border-brand-300"
-                    }`}
-                    onClick={() => handleImageSelect(imagePath)}
-                  >
-                    <Image
-                      src={imagePath}
-                      alt={`Product ${index + 1}`}
-                      width={120}
-                      height={120}
-                      className="w-full h-24 object-cover rounded-lg"
-                    />
-                    {formData.images.includes(imagePath) && (
-                      <div className="absolute top-1 right-1 w-6 h-6 bg-brand-500 text-white rounded-full flex items-center justify-center text-xs">
-                        ✓
-                      </div>
-                    )}
+              <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 text-center">
+                <input
+                  type="file"
+                  multiple
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  className="hidden"
+                  id="image-upload"
+                />
+                <label
+                  htmlFor="image-upload"
+                  className="cursor-pointer flex flex-col items-center space-y-2"
+                >
+                  <div className="w-12 h-12 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center">
+                    <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                    </svg>
                   </div>
-                ))}
+                  <span className="text-sm text-gray-600 dark:text-gray-400">
+                    Зураг нэмэх
+                  </span>
+                  <span className="text-xs text-gray-500 dark:text-gray-500">
+                    Эсвэл зургийг энд чирээд тавина уу
+                  </span>
+                </label>
               </div>
               {errors.images && <p className="text-red-500 text-sm mt-1">{errors.images}</p>}
             </div>
 
             {formData.images.length > 0 && (
               <div>
-                <Label>Selected Images ({formData.images.length})</Label>
+                <Label>Сонгосон зураг ({formData.images.length})</Label>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-2">
-                  {formData.images.map((imagePath, index) => (
+                  {formData.images.map((file, index) => (
                     <div key={index} className="relative">
-                      <Image
-                        src={imagePath}
-                        alt={`Selected ${index + 1}`}
-                        width={96}
-                        height={96}
+                      <img
+                        src={URL.createObjectURL(file)}
+                        alt={`Uploaded ${index + 1}`}
                         className="w-full h-24 object-cover rounded-lg border border-gray-200 dark:border-gray-700"
                       />
                       <button
@@ -729,6 +764,9 @@ export default function AddProductPage() {
                       >
                         ×
                       </button>
+                      <div className="absolute bottom-1 left-1 right-1 bg-black bg-opacity-50 text-white text-xs p-1 rounded">
+                        {file.name.length > 15 ? `${file.name.substring(0, 15)}...` : file.name}
+                      </div>
                     </div>
                   ))}
                 </div>
